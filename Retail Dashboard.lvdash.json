@@ -1,0 +1,484 @@
+{
+  "datasets": [
+    {
+      "name": "0c23f797",
+      "displayName": "customers",
+      "queryLines": [
+        "SELECT * FROM databricks_simulated_retail_customer_data.v01.customers"
+      ]
+    },
+    {
+      "name": "04418d3a",
+      "displayName": "sales_orders",
+      "queryLines": [
+        "SELECT * FROM databricks_simulated_retail_customer_data.v01.sales_orders"
+      ]
+    },
+    {
+      "name": "04581833",
+      "displayName": "Sales Goal",
+      "queryLines": [
+        "SELECT\r\n",
+        "\r\n",
+        "sum(total_price) AS Total_Sales, 3000000 AS Sales_Goal\r\n",
+        "\r\n",
+        "FROM\r\n",
+        "\r\n",
+        "databricks_simulated_retail_customer_data.v01.sales;"
+      ]
+    },
+    {
+      "name": "0c48df71",
+      "displayName": "Sales Over Three Months",
+      "queryLines": [
+        "SELECT customer_name, \r\n",
+        "       total_price AS Total_Sales, \r\n",
+        "       date_format(order_date, \"MM\") AS Month, \r\n",
+        "       product_category \r\n",
+        "FROM databricks_simulated_retail_customer_data.v01.sales \r\n",
+        "WHERE order_date >= to_date('2019-08-01')\r\n",
+        "AND order_date <=  to_date('2019-10-31');"
+      ]
+    },
+    {
+      "name": "d9b88a66",
+      "displayName": "sales",
+      "queryLines": [
+        "SELECT * FROM databricks_simulated_retail_customer_data.v01.sales"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "8c285e52",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "sales-goal",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "04581833",
+                  "fields": [
+                    {
+                      "name": "sum(Sales_Goal)",
+                      "expression": "SUM(`Sales_Goal`)"
+                    },
+                    {
+                      "name": "sum(Total_Sales)",
+                      "expression": "SUM(`Total_Sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Sales Goal"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Total_Sales)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "BRL",
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "negativeSign": "accounting"
+                  },
+                  "style": {
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": "<="
+                        },
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 4
+                        }
+                      }
+                    ]
+                  }
+                },
+                "target": {
+                  "fieldName": "sum(Sales_Goal)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "BRL",
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "sales-over-three-months",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0c48df71",
+                  "fields": [
+                    {
+                      "name": "Month",
+                      "expression": "`Month`"
+                    },
+                    {
+                      "name": "sum(Total_Sales)",
+                      "expression": "SUM(`Total_Sales`)"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "showTitle": true,
+                "title": "Sales Over Three Months"
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "Month",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(Total_Sales)",
+                        "displayName": "Total Sales"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "BRL",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 2
+                      }
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "count(*)",
+                        "displayName": "Number of Sales"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "9d1c8b96",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0c48df71",
+                  "fields": [
+                    {
+                      "name": "product_category",
+                      "expression": "`product_category`"
+                    },
+                    {
+                      "name": "avg(Total_Sales)",
+                      "expression": "AVG(`Total_Sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Bar 2",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "product_category",
+                  "displayName": "Product Category",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(Total_Sales)",
+                  "axis": {
+                    "hideLabels": false,
+                    "hideGrid": false,
+                    "hideTitle": false
+                  },
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    },
+                    "hideGroupSeparator": false
+                  },
+                  "displayName": "Average Total Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "product_category",
+                  "displayName": "Product Category",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Ramsung",
+                        "color": "#2A499B"
+                      },
+                      {
+                        "value": "Reagate",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 5
+                        }
+                      },
+                      {
+                        "value": "Rony",
+                        "color": "#4E69A6"
+                      },
+                      {
+                        "value": "Sioneer",
+                        "color": "#2B6B89"
+                      },
+                      {
+                        "value": "Zamaha",
+                        "color": "#3847C1"
+                      }
+                    ]
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "06c1430c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d9b88a66",
+                  "fields": [
+                    {
+                      "name": "daily(order_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `order_date`)"
+                    },
+                    {
+                      "name": "sum(total_price)",
+                      "expression": "SUM(`total_price`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(order_date)",
+                  "displayName": "Order Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_price)",
+                  "displayName": "Sum of total price",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "26853377",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:36px;line-height:1.5\">**Retail Organization**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "product-category",
+            "queries": [
+              {
+                "name": "dashboards/01f11d79943e17e0ac17a94ae68e3dc1/datasets/01f11e32180c15939de4a97593ed1a41_product_category",
+                "query": {
+                  "datasetName": "d9b88a66",
+                  "fields": [
+                    {
+                      "name": "product_category",
+                      "expression": "`product_category`"
+                    },
+                    {
+                      "name": "product_category_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f11d79943e17e0ac17a94ae68e3dc1/datasets/01f11d7b27241bc7baeec0290f22f1ac_product_category",
+                "query": {
+                  "datasetName": "0c48df71",
+                  "fields": [
+                    {
+                      "name": "product_category",
+                      "expression": "`product_category`"
+                    },
+                    {
+                      "name": "product_category_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "scale": {
+                "type": "categorical",
+                "sort": {
+                  "by": "custom-order",
+                  "orderedValues": [
+                    "Opple",
+                    "Ramsung",
+                    "Reagate",
+                    "Rony",
+                    "Sioneer",
+                    "Zamaha"
+                  ]
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Product Category"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "product_category",
+                    "queryName": "dashboards/01f11d79943e17e0ac17a94ae68e3dc1/datasets/01f11e32180c15939de4a97593ed1a41_product_category"
+                  },
+                  {
+                    "fieldName": "product_category",
+                    "queryName": "dashboards/01f11d79943e17e0ac17a94ae68e3dc1/datasets/01f11d7b27241bc7baeec0290f22f1ac_product_category"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
